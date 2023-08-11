@@ -1,32 +1,30 @@
-const express = require("express")
-const mongoose = require("mongoose")
-const app = express()
-const UserRoutes = require("./app/src/routes/UserRoutes")
-const DoctorRoutes = require("./app/src/routes/DoctorRoutes")
-const RoleRoutes = require("./app/src/routes/RoleRoutes")
-const cors = require("cors")
-// require("./app/src/config/dbConfig").getDbConnection()
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 
+const app = express();
 
-MONGO_URI = "mongodb://127.0.0.1:27017/online-dr"
-mongoose.connect(MONGO_URI).then(()=>console.log("Db Connected "))
-.catch(()=>console.log("Db Connection failed"))
-
-
-//middleware
-app.use(express.urlencoded({extended:true}))
-app.use(express.json())
+app.use(express.json());
 app.use(cors())
 
-//User
-app.use("/user",UserRoutes)
+const userRoutes = require('./routes/UserRoutes');
+const roleRoutes = require('./routes/RoleRoutes');
+const drRoutes = require('./routes/DoctorRoutes');
 
-//Doctor
-app.use("/doctor",DoctorRoutes)
+app.use('/user',userRoutes);
+app.use('/role',roleRoutes);
+app.use('/doctor',drRoutes);
 
-//role
-app.use("/role",RoleRoutes)
+mongoose.connect("mongodb://127.0.0.1:27017/online-dr",{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => {
+    console.log("Connected to MongoDB");
+}).catch((err) => {
+    console.log(err);
+})
 
-app.listen(9999,function(){
-    console.log("Server Started at 9999")
+const PORT = 3001
+app.listen(PORT,() => {
+    console.log("server is running on port ",PORT);
 })
